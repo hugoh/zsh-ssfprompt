@@ -1,4 +1,4 @@
-# zsh ssfpromt: slim, simple, fast prompt
+# zsh-ssfprompt: slim, simple, fast prompt for Zsh
 
 This is prompt for zsh designed to be:
 - Simple: only shows the information that matters
