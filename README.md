@@ -9,7 +9,11 @@ It's likely going to evolve very little (if at all) functionality-wise.
 
 ## Install
 
-I recommend a zsh plugin manager, such as zplug.
+I recommend a zsh plugin manager, such as zplug:
+
+```sh
+zplug 'hugoh/zsh-ssfprompt', use:'prompt_*', from:gitlab, lazy:true
+```
 
 Then, activate with:
 
@@ -21,6 +25,12 @@ prompt ssfprompt
 ## Requirements
 
 For asynchronous lookups, you will need to install [zsh-async](https://github.com/mafredri/zsh-async).
+
+Again, with zplug:
+
+```sh
+zplug 'mafredri/zsh-async', if:'is-at-least 4.3.11 >& /dev/null'
+```
 
 ## Customization
 
