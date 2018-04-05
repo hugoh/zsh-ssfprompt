@@ -9,27 +9,21 @@ It's likely going to evolve very little (if at all) functionality-wise.
 
 ## Install
 
-I recommend a zsh plugin manager, such as zplug:
+I recommend a zsh plugin manager, such as antigen:
 
 ```sh
-zplug 'hugoh/zsh-ssfprompt', use:'prompt_*', from:gitlab, lazy:true
-```
-
-Then, activate with:
-
-```sh
-autoload -U promptinit && promptinit
-prompt ssfprompt
+antigen bundle https://gitlab.com/hugoh/zsh-ssfprompt
 ```
 
 ## Requirements
 
 For asynchronous lookups, you will need to install [zsh-async](https://github.com/mafredri/zsh-async).
 
-Again, with zplug:
+Again, with antigen:
 
 ```sh
-zplug 'mafredri/zsh-async', if:'is-at-least 4.3.11 >& /dev/null'
+antigen bundle mafredri/zsh-async
+antigen bundle https://gitlab.com/hugoh/zsh-ssfprompt
 ```
 
 ## Customization
