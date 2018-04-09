@@ -7,6 +7,8 @@ This is prompt for zsh designed to be:
 
 It's likely going to evolve very little (if at all) functionality-wise.
 
+![Screenshot](https://gitlab.com/hugoh/zsh-ssfprompt/uploads/e82849c541f86ac0366b202030ccab90/screenshot-zsh-ssfprompt.png)
+
 ## Install
 
 I recommend a zsh plugin manager, such as antigen:
