@@ -29,7 +29,7 @@ prompt_ssfprompt_setup() {
 
 prompt_ssfprompt_setup_PROMPT() {
   # Simple, lean PROMPT
-  PROMPT='${USER:+"%F{blue}%(!.%B.)%n%F{yellow}@%b"}${SSH_CONNECTION+"%F{red}%m"}${USER:+" "}%F{green}%(!.%1~.%~)%F{yellow}${VIRTUAL_ENV:+ $(prompt_ssfprompt_virtualenv)} %F{yellow}%#%f '
+  PROMPT='${USER:+"%F{blue}%(!.%B.)%n%F{yellow}@%b"}${SSH_CONNECTION+"%F{red}%m"}${USER:+" "}%F{cyan}%(!.%1~.%~)%F{yellow}${VIRTUAL_ENV:+ $(prompt_ssfprompt_virtualenv)} %F{yellow}%#%f '
   VIRTUAL_ENV_DISABLE_PROMPT=1
 }
 
