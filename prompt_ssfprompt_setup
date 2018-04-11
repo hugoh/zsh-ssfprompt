@@ -152,7 +152,7 @@ prompt_ssfprompt_async_rprompt_render() {
 
 function +vi-ssfprompt-git-status() {
   # Show untracked files
-  if [[ -n $(git ls-files --other --exclude-standard 2> /dev/null) ]]; then
+  if [[ -n $(git ls-files --other --exclude-standard $(git rev-parse --show-toplevel) 2> /dev/null) ]]; then
     zstyle -s ':ssfprompt:vcs_info:untracked' flag 'untracked'
     hook_com[misc]+="%F{magenta}$untracked"
   fi
