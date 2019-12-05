@@ -1,4 +1,4 @@
-## vim:ft=zsh
+# vim:ft=zsh
 
 prompt_ssfprompt_help() {
   echo "Slim, simple, fast prompt -- https://gitlab.com/hugoh/zsh-ssfprompt"
@@ -8,18 +8,9 @@ prompt_ssfprompt_help() {
 
 prompt_ssfprompt_setup() {
   # Prompt options for promptinit
-  prompt_opts=(cr percent subst)
+  prompt_opts=(bang cr percent subst)
 
   # Parameters
-  zstyle ':ssfprompt:vcs_info:vcs_separator' separator '·'
-  zstyle ':ssfprompt:vcs_info:clean' flag '✔'
-  zstyle ':ssfprompt:vcs_info:staged' flag '●'
-  zstyle ':ssfprompt:vcs_info:unstaged' flag '✚'
-  zstyle ':ssfprompt:vcs_info:untracked' flag '…'
-  zstyle ':ssfprompt:remote:synced' flag '='
-  zstyle ':ssfprompt:remote:ahead' flag '↑'
-  zstyle ':ssfprompt:remote:behind' flag '↓'
-  zstyle ':ssfprompt:remote:untracked' flag '-'
   zstyle ':ssfprompt:virtualenv:prefix' flag 'Π' # '🐍'
 
   # Setup
@@ -33,30 +24,18 @@ prompt_ssfprompt_setup_PROMPT() {
   VIRTUAL_ENV_DISABLE_PROMPT=1
 }
 
-prompt_ssfprompt_async_worker_setup() {
-  async_start_worker "prompt_ssfprompt_worker" -u -n >&/dev/null
-  async_register_callback "prompt_ssfprompt_worker" prompt_ssfprompt_async_rprompt_render >&/dev/null
-}
-
 prompt_ssfprompt_setup_RPROMPT() {
-  # VCS info on RPROMPT
-  autoload -Uz vcs_info
-  zstyle ':vcs_info:*' check-for-changes true
+  # git info on RPROMPT
+  _ssfprompt_RPROMPT='%(?..%F{red}%?↵%f)'
+  RPROMPT=$_ssfprompt_RPROMPT
 
   # Set asynchronously by default
   autoload -Uz add-zsh-hook
   if async_init 2>/dev/null; then
-    # Additional git processing
-    zstyle ':vcs_info:git*+set-message:*' hooks ssfprompt-git-status ssfprompt-clean
     add-zsh-hook precmd prompt_ssfprompt_async_precmd
-    # Setup worker
-
   else
-    add-zsh-hook precmd prompt_ssfprompt_sync_precmd
-    RPROMPT='${vcs_info_msg_0_}'
+    RPROMPT+='$(prompt_ssfprompt_sync_precmd)'
   fi
-  # Default processing
-  zstyle ':vcs_info:*+set-message:*' hooks ssfprompt-clean
 }
 
 prompt_ssfprompt_help_status() {
@@ -79,27 +58,7 @@ prompt_ssfprompt_help_status() {
 prompt_ssfprompt_virtualenv() {
   zstyle -s ':ssfprompt:virtualenv:prefix' flag 'flag'
 
-  printf "(%s%s)" ${flag} ${VIRTUAL_ENV:t}
-}
-
-#
-# Call vcs_info with the right parameters
-#
-
-prompt_ssfprompt_vcs_info() {
-  zstyle -s ':ssfprompt:vcs_info:vcs_separator' separator 'vcs_sep'
-  zstyle -s ':ssfprompt:vcs_info:unstaged' flag 'unstaged'
-  zstyle -s ':ssfprompt:vcs_info:staged' flag 'staged'
-
-  zstyle ':vcs_info:*' formats "%F{blue}%3>>%s%<<$vcs_sep%b%u%c%m%f"
-  zstyle ':vcs_info:*' actionformats "%F{blue}%3>>%s%<<-%b!%a%u%c%m%f"
-  zstyle ':vcs_info:git*:*' patch-format '%5>…>%p%<< (%n applied)'
-  zstyle ':vcs_info:*' branchformat "%F{blue}%b:%r"
-  
-  zstyle ':vcs_info:*' unstagedstr "%F{red}$unstaged"
-  zstyle ':vcs_info:*' stagedstr "%F{yellow}$staged"
-
-  vcs_info
+  printf "(%s%s)" "${flag}" "${VIRTUAL_ENV:t}"
 }
 
 #
@@ -107,7 +66,7 @@ prompt_ssfprompt_vcs_info() {
 #
 
 prompt_ssfprompt_sync_precmd() {
-  prompt_ssfprompt_vcs_info
+  __posh_git_echo
 }
 
 #
@@ -115,85 +74,31 @@ prompt_ssfprompt_sync_precmd() {
 #
 
 prompt_ssfprompt_async_precmd() {
-  # Terminate old jobs 
-  async_flush_jobs "prompt_ssfprompt_worker" >&/dev/null || prompt_ssfprompt_async_worker_setup
-  # Start with empty RPROMPT
-  RPROMPT=""
+  RPROMPT=$_ssfprompt_RPROMPT
   # Get vcs_info using the worker; will be updated via the callback
+  async_start_worker "prompt_ssfprompt_worker"
+  async_register_callback "prompt_ssfprompt_worker" prompt_ssfprompt_async_rprompt_render
   async_job "prompt_ssfprompt_worker" prompt_ssfprompt_async_vcs_info "$PWD"
 }
 
 prompt_ssfprompt_async_vcs_info() {
   # Return VCS information for current directory
-  cd "$1" || return 1
-  prompt_ssfprompt_vcs_info
-  print "$vcs_info_msg_0_"
+  if ! cd "$1"; then
+    async_stop_worker "prompt_ssfprompt_worker"
+    return 1
+  fi
+  prompt_ssfprompt_sync_precmd
 }
 
 prompt_ssfprompt_async_rprompt_render() {
-  # Update RPROMPT with the CVS info just received
-  local job="$1"
+  # Update RPROMPT with the VCS info just received
   local output="$3"
-  [[ -z "$output" ]] && return # Nothing to do
-  if [[ "$job" = *vcs_info ]]; then
-    # Launch getting the rest of the prompt
-    async_job "prompt_ssfprompt_worker" prompt_ssfprompt_async_git-ahead-behind "$PWD"
-    # Prepend vcs_info
-    RPROMPT="$output$RPROMPT"
-  else
-    # Append the rest
+  if [[ -n "$output" ]]; then
     RPROMPT+="$output"
+    # Refresh prompt
+    zle && zle reset-prompt
   fi
-  # Refresh prompt
-  zle && zle .reset-prompt
-}
-
-# vcs_info hooks
-
-function +vi-ssfprompt-git-status() {
-  # Show untracked files
-  if [[ -n $(git ls-files --other --exclude-standard $(git rev-parse --show-toplevel) 2> /dev/null) ]]; then
-    zstyle -s ':ssfprompt:vcs_info:untracked' flag 'untracked'
-    hook_com[misc]+="%F{magenta}$untracked"
-  fi
-}
-
-function +vi-ssfprompt-clean() {
-  # In case it's clean
-  if [ -z "${hook_com[staged]}${hook_com[unstaged]}" ]; then
-    # Nothing modified
-    zstyle -s ':ssfprompt:vcs_info:clean' flag 'clean'
-    hook_com[unstaged]="%F{green}$clean"
-  fi
-}
-
-prompt_ssfprompt_async_git-ahead-behind() {
-  cd "$1" || return 1
-  # Confirm that this is a git repo
-  git rev-parse --is-inside-work-tree >& /dev/null || return 0
-  # Proceed
-  local ret="%F{blue}|"
-  if git rev-parse @{push} >& /dev/null; then
-    # Show +N/-N when your local branch is ahead-of or behind remote HEAD.
-    local -a behind_ahead gitstatus
-    behind_ahead=($(git rev-list --count --left-right @{push}...@ 2>/dev/null))
-    zstyle -s ':ssfprompt:remote:ahead' flag 'ahead'
-    zstyle -s ':ssfprompt:remote:behind' flag 'behind'
-    (( $behind_ahead[1] )) && gitstatus+=( "%F{red}${behind}${behind_ahead[1]}" )
-    (( $behind_ahead[2] )) && gitstatus+=( "%F{green}${ahead}${behind_ahead[2]}" )
-    if [[ ${#gitstatus} > 0 ]]; then
-      ret+="${(@j::)gitstatus}"
-    else 
-      # Synced
-      zstyle -s ':ssfprompt:remote:synced' flag 'synced'
-      ret+=$synced
-    fi
-  else
-    # No upstream
-    zstyle -s ':ssfprompt:remote:untracked' flag 'untracked'
-    ret+="%F{red}$untracked"
-  fi
-  print "$ret%f"
+  async_stop_worker "prompt_ssfprompt_worker"
 }
 
 prompt_ssfprompt_setup "$@"

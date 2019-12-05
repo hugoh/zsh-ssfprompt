@@ -11,21 +11,23 @@ It's likely going to evolve very little (if at all) functionality-wise.
 
 ## Install
 
-I recommend a zsh plugin manager, such as antigen:
+I recommend a zsh plugin manager, such as [Zplugin](https://github.com/zdharma/zplugin):
 
 ```sh
-antigen bundle https://gitlab.com/hugoh/zsh-ssfprompt
+zplugin light https://gitlab.com/hugoh/zsh-ssfprompt.git
 ```
 
 ## Requirements
 
-For asynchronous lookups, you will need to install [zsh-async](https://github.com/mafredri/zsh-async).
+* For asynchronous lookups, you will need to install [zsh-async](https://github.com/mafredri/zsh-async).
+* Git HUD is provided by [posh-git-sh](https://github.com/lyze/posh-git-sh)
 
-Again, with antigen:
+Again, with Zplugin:
 
 ```sh
-antigen bundle mafredri/zsh-async
-antigen bundle https://gitlab.com/hugoh/zsh-ssfprompt
+zplugin light mafredri/zsh-async
+zplugin ice pick'git-prompt.sh'; zplugin light lyze/posh-git-sh
+zplugin light https://gitlab.com/hugoh/zsh-ssfprompt.git
 ```
 
 ## Customization
