@@ -11,6 +11,7 @@ prompt_ssfprompt_setup() {
   prompt_opts=(bang cr percent subst)
 
   # Parameters
+  zstyle ':ssfprompt:git:checker' flag 'posh-git-sh' # also supported: git-radar githud
   zstyle ':ssfprompt:virtualenv:prefix' flag 'Π' # '🐍'
 
   # Setup
@@ -66,7 +67,14 @@ prompt_ssfprompt_virtualenv() {
 #
 
 prompt_ssfprompt_sync_precmd() {
-  __posh_git_echo
+  zstyle -s ':ssfprompt:git:checker' flag 'checker'
+
+  case "${checker}" in
+    posh-git-sh) __posh_git_echo ;;
+    git-radar) command git-radar --zsh ;;
+    githud) command githud zsh ;;
+    *) return 1
+  esac
 }
 
 #
