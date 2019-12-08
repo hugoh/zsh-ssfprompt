@@ -21,12 +21,9 @@ zplugin light https://gitlab.com/hugoh/zsh-ssfprompt.git
 ## Requirements
 
 * For asynchronous lookups, you will need to install [zsh-async](https://github.com/mafredri/zsh-async).
-* One Git status module; supported options:
-  * [posh-git-sh](https://github.com/lyze/posh-git-sh)
-  * [gitHUD](https://github.com/gbataille/gitHUD)
-  * [git-radar](https://github.com/michaeldfallen/git-radar)
+* One Git status module; by default, it uses [posh-git-sh](https://github.com/lyze/posh-git-sh)
 
-Again, with Zplugin, to use `posh-git-sh`:
+Again, with Zplugin:
 
 ```sh
 zplugin light mafredri/zsh-async
@@ -36,11 +33,20 @@ zplugin light https://gitlab.com/hugoh/zsh-ssfprompt.git
 
 ## Customization
 
-There are limited customization options via `zstyle`.
+You can of course defined your own `PROMPT` variable.
 
-In particular, you can choose the Git status implementation to use via:
+You can also override the Git status function to your liking.
+
+To use [gitHUD](https://github.com/gbataille/gitHUD):
 
 ```sh
-# Valid values are: posh-git-sh (default) / githud / git-radar
-zstyle ':ssfprompt:git:checker' flag 'git-radar'
+prompt_ssfprompt_vcs_status() { command githud zsh }
 ```
+
+To use [git-radar](https://github.com/michaeldfallen/git-radar):
+
+```sh
+prompt_ssfprompt_vcs_status() { command git-radar --zsh }
+```
+
+Etc.

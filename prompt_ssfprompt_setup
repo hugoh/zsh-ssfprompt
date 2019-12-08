@@ -10,10 +10,6 @@ prompt_ssfprompt_setup() {
   # Prompt options for promptinit
   prompt_opts=(bang cr percent subst)
 
-  # Parameters
-  zstyle ':ssfprompt:git:checker' flag 'posh-git-sh' # also supported: git-radar githud
-  zstyle ':ssfprompt:virtualenv:prefix' flag 'Π' # '🐍'
-
   # Setup
   prompt_ssfprompt_setup_PROMPT
   prompt_ssfprompt_setup_RPROMPT
@@ -21,12 +17,13 @@ prompt_ssfprompt_setup() {
 
 prompt_ssfprompt_setup_PROMPT() {
   # Simple, lean PROMPT
-  PROMPT='${SSH_CONNECTION:+"%F{blue}%(!.%B.)%n%F{yellow}@%b%F{red}%m "}%F{cyan}%(!.%1~.%~)%F{yellow}${VIRTUAL_ENV:+ $(prompt_ssfprompt_virtualenv)} %F{yellow}%#%f '
+  local VIRTUAL_ENV_prefix="" # Requires a Nerd font for the Python glyph
+  PROMPT='${SSH_CONNECTION:+"%F{blue}%(!.%B.)%n%F{yellow}@%b%F{red}%m "}%F{cyan}%(!.%1~.%~)%F{yellow}${VIRTUAL_ENV:+ '"${VIRTUAL_ENV_prefix}"'${VIRTUAL_ENV:t}} %F{yellow}%#%f '
   VIRTUAL_ENV_DISABLE_PROMPT=1
 }
 
 prompt_ssfprompt_setup_RPROMPT() {
-  # git info on RPROMPT
+  # VCS info on RPROMPT
   _ssfprompt_RPROMPT='%(?..%F{red}%?↵%f)'
   RPROMPT=$_ssfprompt_RPROMPT
 
@@ -35,7 +32,7 @@ prompt_ssfprompt_setup_RPROMPT() {
   if async_init 2>/dev/null; then
     add-zsh-hook precmd prompt_ssfprompt_async_precmd
   else
-    RPROMPT+='$(prompt_ssfprompt_sync_precmd)'
+    RPROMPT+='$(prompt_ssfprompt_vcs_status)'
   fi
 }
 
@@ -54,27 +51,11 @@ prompt_ssfprompt_help_status() {
 }
 
 #
-# virtualenv
-#
-prompt_ssfprompt_virtualenv() {
-  zstyle -s ':ssfprompt:virtualenv:prefix' flag 'flag'
-
-  printf "(%s%s)" "${flag}" "${VIRTUAL_ENV:t}"
-}
-
-#
-# Synchronous vcs_info
+# VCS status function (using posh-git-sh; can be overriden)
 #
 
-prompt_ssfprompt_sync_precmd() {
-  zstyle -s ':ssfprompt:git:checker' flag 'checker'
-
-  case "${checker}" in
-    posh-git-sh) __posh_git_echo ;;
-    git-radar) command git-radar --zsh ;;
-    githud) command githud zsh ;;
-    *) return 1
-  esac
+prompt_ssfprompt_vcs_status() {
+  __posh_git_echo
 }
 
 #
@@ -91,11 +72,8 @@ prompt_ssfprompt_async_precmd() {
 
 prompt_ssfprompt_async_vcs_info() {
   # Return VCS information for current directory
-  if ! cd "$1"; then
-    async_stop_worker "prompt_ssfprompt_worker"
-    return 1
-  fi
-  prompt_ssfprompt_sync_precmd
+  cd "$1" || return 1
+  prompt_ssfprompt_vcs_status
 }
 
 prompt_ssfprompt_async_rprompt_render() {
