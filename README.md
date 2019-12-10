@@ -8,7 +8,7 @@ This is prompt for zsh designed to be:
 
 It's likely going to evolve very little (if at all) functionality-wise.
 
-[![asciicast](https://asciinema.org/a/285981.png)](https://asciinema.org/a/285981)
+[![asciicast](https://asciinema.org/a/286672.png)](https://asciinema.org/a/286672)
 
 ## Install
 
