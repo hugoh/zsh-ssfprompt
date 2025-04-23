@@ -11,6 +11,7 @@ prompt_ssfprompt_setup() {
   prompt_opts=(bang cr percent subst)
 
   # Setup
+  setopt prompt_subst
   prompt_ssfprompt_setup_PROMPT
   prompt_ssfprompt_setup_RPROMPT
 }
