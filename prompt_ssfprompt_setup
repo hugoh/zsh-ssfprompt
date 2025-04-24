@@ -18,9 +18,7 @@ prompt_ssfprompt_setup() {
 
 prompt_ssfprompt_setup_PROMPT() {
   # Simple, lean PROMPT
-  local VIRTUAL_ENV_prefix="" # Requires a Nerd font for the Python glyph
-  PROMPT='${SSH_CONNECTION:+"%F{blue}%(!.%B.)%n%F{yellow}@%b%F{red}%m "}%F{cyan}%(!.%1~.%~)%F{yellow}${VIRTUAL_ENV:+ '"${VIRTUAL_ENV_prefix}"'${VIRTUAL_ENV:t}} %F{yellow}%#%f '
-  VIRTUAL_ENV_DISABLE_PROMPT=1
+  PROMPT='%B${SSH_CONNECTION:+"%F{blue}%n%F{yellow}@%F{red}%m "}%F{cyan}%(!.%1~.%~)%F{yellow} %F{yellow}%#%f%b '
 }
 
 prompt_ssfprompt_setup_RPROMPT() {
