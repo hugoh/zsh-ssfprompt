@@ -37,6 +37,12 @@ You can of course defined your own `PROMPT` variable.
 
 You can also override the Git status function to your liking.
 
+To use [Starship](https://starship.rs/), configure the Git information to be in the right prompt and then:
+
+```sh
+prompt_ssfprompt_vcs_status() { command starship prompt --right }
+```
+
 To use [gitHUD](https://github.com/gbataille/gitHUD):
 
 ```sh
