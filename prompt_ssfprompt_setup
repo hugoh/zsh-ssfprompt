@@ -28,7 +28,7 @@ prompt_ssfprompt_setup_RPROMPT() {
   # VCS info on RPROMPT
   # Set asynchronously by default
   autoload -Uz add-zsh-hook
-  if async_init 2>/dev/null; then
+  if async 2>/dev/null; then
     add-zsh-hook precmd prompt_ssfprompt_async_precmd
   else
     RPROMPT+='$(prompt_ssfprompt_vcs_status)'
