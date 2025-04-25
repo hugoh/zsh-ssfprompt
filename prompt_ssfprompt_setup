@@ -22,10 +22,10 @@ prompt_ssfprompt_setup_PROMPT() {
 }
 
 prompt_ssfprompt_setup_RPROMPT() {
-  # VCS info on RPROMPT
-  _ssfprompt_RPROMPT='%(?..%F{red}%?↵%f)'
-  RPROMPT=$_ssfprompt_RPROMPT
+  _ssfprompt_BASE_RPROMPT=''
+  RPROMPT=$_ssfprompt_BASE_RPROMPT
 
+  # VCS info on RPROMPT
   # Set asynchronously by default
   autoload -Uz add-zsh-hook
   if async_init 2>/dev/null; then
@@ -62,7 +62,7 @@ prompt_ssfprompt_vcs_status() {
 #
 
 prompt_ssfprompt_async_precmd() {
-  RPROMPT=$_ssfprompt_RPROMPT
+  RPROMPT=$_ssfprompt_BASE_RPROMPT
   # Get vcs_info using the worker; will be updated via the callback
   async_start_worker "prompt_ssfprompt_worker"
   async_register_callback "prompt_ssfprompt_worker" prompt_ssfprompt_async_rprompt_render
