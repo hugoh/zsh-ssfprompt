@@ -2,12 +2,14 @@
 
 prompt_ssfprompt_help() {
   echo "Slim, simple, fast prompt -- https://gitlab.com/hugoh/zsh-ssfprompt"
+  # shellcheck disable=SC2028
   echo "\nCurrent status:"
   prompt_ssfprompt_help_status
 }
 
 prompt_ssfprompt_setup() {
   # Prompt options for promptinit
+  # shellcheck disable=SC2034
   prompt_opts=(cr percent subst)
 
   # Setup
@@ -17,6 +19,7 @@ prompt_ssfprompt_setup() {
 
 prompt_ssfprompt_setup_PROMPT() {
   # Simple, lean PROMPT
+  # shellcheck disable=SC2016,SC2034
   PROMPT='%B${SSH_CONNECTION:+"%F{blue}%n%F{yellow}@%F{red}%m "}%F{cyan}%(!.%1~.%~)%F{yellow} %F{yellow}%#%f%b '
 }
 
@@ -30,17 +33,20 @@ prompt_ssfprompt_setup_RPROMPT() {
   if async 2>/dev/null; then
     add-zsh-hook precmd prompt_ssfprompt_async_precmd
   else
+    # shellcheck disable=SC2016
     RPROMPT+='$(prompt_ssfprompt_vcs_status)'
   fi
 }
 
 prompt_ssfprompt_help_status() {
-  if [[ $prompt_theme[1] != "ssfprompt" ]]; then
+  # shellcheck disable=SC2154
+  if [[ ${prompt_theme[1]} != "ssfprompt" ]]; then
     echo "ssfprompt not loaded"
     return 1
   else
     echo "ssfprompt loaded"
-    if [[ ${precmd_functions[(I)prompt_ssfprompt_async_precmd]} > 0 ]]; then
+    # shellcheck disable=SC2154
+    if [[ ${precmd_functions[(I)prompt_ssfprompt_async_precmd]} -gt 0 ]]; then
       echo "  async"
     else
       echo "  sync"
