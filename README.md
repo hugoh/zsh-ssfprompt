@@ -10,9 +10,16 @@ It's likely going to evolve very little (if at all) functionality-wise.
 
 [![asciicast](https://asciinema.org/a/286672.png)](https://asciinema.org/a/286672)
 
-## Install
+## Installation
 
-I recommend a zsh plugin manager, such as [Zplugin](https://github.com/zdharma/zplugin):
+The proper way to use it is to add the plugin to your `fpath` and then run:
+
+```sh
+autoload -U promptinit && promptinit
+prompt ssfprompt
+```
+
+If you don't want to do it by hand, you can use a zsh plugin manager, such as [Zplugin](https://github.com/zdharma/zplugin):
 
 ```sh
 zplugin light https://gitlab.com/hugoh/zsh-ssfprompt.git
@@ -33,9 +40,15 @@ zplugin light https://gitlab.com/hugoh/zsh-ssfprompt.git
 
 ## Customization
 
+### Left Prompt
+
 You can of course defined your own `PROMPT` variable.
 
-You can also override the Git status function to your liking.
+### Right Prompt - Asynchronous Rendering
+
+You can also override the Git status function to your liking by overriding `prompt_ssfprompt_vcs_status`.
+
+#### Using Starship
 
 To use [Starship](https://starship.rs/), configure the Git information to be in the right prompt and then:
 
@@ -43,16 +56,45 @@ To use [Starship](https://starship.rs/), configure the Git information to be in 
 prompt_ssfprompt_vcs_status() { command starship prompt --right }
 ```
 
+With zsh-async installed, this will run Starship asynchronously to provide Git status – a workaround for [fetching Git status asynchronously with Starship](https://github.com/starship/starship/issues/301) –, assuming to have your right prompt configured as follows:
+
+```toml
+right_format = """
+%F{yellow}\
+$git_branch\
+$git_commit\
+$git_state\
+%f\
+%F{red}\
+$git_status\
+%f\
+"""
+
+[git_branch]
+style = ''
+
+[git_commit]
+style = ''
+
+[git_state]
+style = ''
+
+[git_status]
+style = ''
+```
+
+#### Using gitHUD
+
 To use [gitHUD](https://github.com/gbataille/gitHUD):
 
 ```sh
 prompt_ssfprompt_vcs_status() { command githud zsh }
 ```
 
+#### Using git-radar
+
 To use [git-radar](https://github.com/michaeldfallen/git-radar):
 
 ```sh
 prompt_ssfprompt_vcs_status() { command git-radar --zsh }
 ```
-
-Etc.
