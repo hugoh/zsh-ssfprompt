@@ -8,10 +8,9 @@ prompt_ssfprompt_help() {
 
 prompt_ssfprompt_setup() {
   # Prompt options for promptinit
-  prompt_opts=(bang cr percent subst)
+  prompt_opts=(cr percent subst)
 
   # Setup
-  setopt prompt_subst noprompt_bang
   prompt_ssfprompt_setup_PROMPT
   prompt_ssfprompt_setup_RPROMPT
 }
