@@ -42,13 +42,27 @@ zplugin light https://gitlab.com/hugoh/zsh-ssfprompt.git
 
 ### Left Prompt
 
-You can of course defined your own `PROMPT` variable.
+Uses the `PROMPT` variable. You can define your own if desired.
 
-### Right Prompt - Asynchronous Rendering
+### Right Prompt - Vi Mode Indicator + VCS Status Asynchronous Rendering
+
+#### Vi Mode Indicator and Cursor
+
+By default, ssfprompt displays a small Vi mode indicator on the right prompt ([N] when in normal mode) and switches the cursor shape (block in normal mode, vertical bar in insert mode).
+
+You can disable both the indicator and the cursor shape changes via `zstyle`. Set this before loading the prompt:
+
+```sh
+zstyle ':prompt:ssfprompt' vi-mode off
+```
+
+#### VCS Status
+
+Uses `prompt_ssfprompt_vcs_status` to display VCS status.
 
 You can also override the Git status function to your liking by overriding `prompt_ssfprompt_vcs_status`.
 
-#### Using Starship
+##### Using Starship
 
 To use [Starship](https://starship.rs/), configure the Git information to be in the right prompt and then:
 
@@ -83,7 +97,7 @@ style = ''
 style = ''
 ```
 
-#### Using gitHUD
+##### Using gitHUD
 
 To use [gitHUD](https://github.com/gbataille/gitHUD):
 
@@ -91,7 +105,7 @@ To use [gitHUD](https://github.com/gbataille/gitHUD):
 prompt_ssfprompt_vcs_status() { command githud zsh }
 ```
 
-#### Using git-radar
+##### Using git-radar
 
 To use [git-radar](https://github.com/michaeldfallen/git-radar):
 

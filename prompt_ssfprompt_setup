@@ -15,6 +15,11 @@ prompt_ssfprompt_setup() {
   # Setup
   prompt_ssfprompt_setup_PROMPT
   prompt_ssfprompt_setup_RPROMPT
+
+  # zstyle ':prompt:ssfprompt' vi-mode off
+  if prompt_ssfprompt_vimode_is_enabled; then
+    prompt_ssfprompt_setup_vimode
+  fi
 }
 
 prompt_ssfprompt_setup_PROMPT() {
@@ -36,6 +41,21 @@ prompt_ssfprompt_setup_RPROMPT() {
     # shellcheck disable=SC2016
     RPROMPT+='$(prompt_ssfprompt_vcs_status)'
   fi
+
+}
+
+prompt_ssfprompt_vimode_is_enabled() {
+  local _ssfprompt_vimode
+  if ! zstyle -s ':prompt:ssfprompt' vi-mode _ssfprompt_vimode || [[ "$_ssfprompt_vimode" != (off|false|no|0) ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+prompt_ssfprompt_setup_vimode() {
+  function zle-keymap-select() { prompt_ssfprompt_vi_keymap_select }
+  zle -N zle-keymap-select
 }
 
 prompt_ssfprompt_help_status() {
@@ -50,6 +70,11 @@ prompt_ssfprompt_help_status() {
       echo "  async"
     else
       echo "  sync"
+    fi
+    if prompt_ssfprompt_vimode_is_enabled; then
+      echo "  vi-mode on"
+    else
+      echo "  vi-mode off"
     fi
   fi
 }
@@ -89,6 +114,41 @@ prompt_ssfprompt_async_rprompt_render() {
     zle && zle reset-prompt
   fi
   async_stop_worker "prompt_ssfprompt_worker"
+}
+
+#
+# Vim mode indicator
+#
+
+prompt_ssfprompt_vi_keymap_select_rprompt() {
+  local INDICATOR="%F{blue}[N]%f "
+  if [[ $KEYMAP == vicmd ]]; then
+    if [[ $RPROMPT != "$INDICATOR"* ]]; then
+      RPROMPT="$INDICATOR$RPROMPT"
+    fi
+  else
+    if [[ $RPROMPT == "$INDICATOR"* ]]; then
+      RPROMPT="${RPROMPT#$INDICATOR}"
+    fi
+  fi
+}
+
+prompt_ssfprompt_vi_keymap_select_cursor() {
+  local -A _ssfprompt_cursor_seq=(
+    [block]=$'\e[1 q'
+    [caret]=$'\e[5 q'
+  )
+  if [[ $KEYMAP == vicmd ]]; then
+    echo -ne "${_ssfprompt_cursor_seq[block]}"
+  elif [[ $KEYMAP == viins ]]; then
+    echo -ne "${_ssfprompt_cursor_seq[caret]}"
+  fi
+}
+
+prompt_ssfprompt_vi_keymap_select() {
+  prompt_ssfprompt_vi_keymap_select_cursor
+  prompt_ssfprompt_vi_keymap_select_rprompt
+  zle reset-prompt
 }
 
 prompt_ssfprompt_setup "$@"
