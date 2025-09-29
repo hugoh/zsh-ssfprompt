@@ -140,7 +140,7 @@ prompt_ssfprompt_vi_keymap_select_cursor() {
   )
   if [[ $KEYMAP == vicmd ]]; then
     echo -ne "${_ssfprompt_cursor_seq[block]}"
-  elif [[ $KEYMAP == viins ]]; then
+  elif [[ $KEYMAP == viins ]] || [[ $KEYMAP == main ]]; then
     echo -ne "${_ssfprompt_cursor_seq[caret]}"
   fi
 }
