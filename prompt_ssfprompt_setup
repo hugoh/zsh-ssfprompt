@@ -54,6 +54,8 @@ prompt_ssfprompt_vimode_is_enabled() {
 }
 
 prompt_ssfprompt_setup_vimode() {
+  autoload -Uz add-zsh-hook
+  add-zsh-hook precmd prompt_ssfprompt_vi_keymap_select_cursor
   function zle-keymap-select() { prompt_ssfprompt_vi_keymap_select }
   zle -N zle-keymap-select
 }
@@ -138,11 +140,14 @@ prompt_ssfprompt_vi_keymap_select_cursor() {
     [block]=$'\e[1 q'
     [caret]=$'\e[5 q'
   )
-  if [[ $KEYMAP == vicmd ]] || [[ $KEYMAP == visual ]]; then
-    echo -ne "${_ssfprompt_cursor_seq[block]}"
-  elif [[ $KEYMAP == viins ]] || [[ $KEYMAP == main ]]; then
-    echo -ne "${_ssfprompt_cursor_seq[caret]}"
-  fi
+  case $KEYMAP in
+    viins|emacs|main)
+      echo -ne "${_ssfprompt_cursor_seq[caret]}"
+      ;;
+    vicmd|visual)
+      echo -ne "${_ssfprompt_cursor_seq[block]}"
+      ;;
+  esac
 }
 
 prompt_ssfprompt_vi_keymap_select() {
