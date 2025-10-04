@@ -141,7 +141,7 @@ prompt_ssfprompt_vi_keymap_select_cursor() {
     [caret]=$'\e[5 q'
   )
   case $KEYMAP in
-    viins|emacs|main)
+    viins|emacs|main|)
       echo -ne "${_ssfprompt_cursor_seq[caret]}"
       ;;
     vicmd|visual)
