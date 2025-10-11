@@ -1,9 +1,9 @@
 # vim:ft=zsh
 
 prompt_ssfprompt_help() {
-  echo "Slim, simple, fast prompt -- https://gitlab.com/hugoh/zsh-ssfprompt"
+  print "Slim, simple, fast prompt -- https://gitlab.com/hugoh/zsh-ssfprompt"
   # shellcheck disable=SC2028
-  echo "\nCurrent status:"
+  print "\nCurrent status:"
   prompt_ssfprompt_help_status
 }
 
@@ -63,20 +63,20 @@ prompt_ssfprompt_setup_vimode() {
 prompt_ssfprompt_help_status() {
   # shellcheck disable=SC2154
   if [[ ${prompt_theme[1]} != "ssfprompt" ]]; then
-    echo "ssfprompt not loaded"
+    print "ssfprompt not loaded"
     return 1
   else
-    echo "ssfprompt loaded"
+    print "ssfprompt loaded"
     # shellcheck disable=SC2154
     if [[ ${precmd_functions[(I)prompt_ssfprompt_async_precmd]} -gt 0 ]]; then
-      echo "  async"
+      print "  async"
     else
-      echo "  sync"
+      print "  sync"
     fi
     if prompt_ssfprompt_vimode_is_enabled; then
-      echo "  vi-mode on"
+      print "  vi-mode on"
     else
-      echo "  vi-mode off"
+      print "  vi-mode off"
     fi
   fi
 }
@@ -142,10 +142,10 @@ prompt_ssfprompt_vi_keymap_select_cursor() {
   )
   case $KEYMAP in
     viins|emacs|main|)
-      echo -ne "${_ssfprompt_cursor_seq[caret]}"
+      print -n "${_ssfprompt_cursor_seq[caret]}"
       ;;
     vicmd|visual)
-      echo -ne "${_ssfprompt_cursor_seq[block]}"
+      print -n "${_ssfprompt_cursor_seq[block]}"
       ;;
   esac
 }
