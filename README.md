@@ -1,6 +1,7 @@
 # zsh-ssfprompt: slim, simple, fast prompt for Zsh
 
 This is prompt for zsh designed to be:
+
 - Simple: only shows the information that matters
 - Slim: fits on one line, with VCS information on the right and disappearing as needed
 - Fast: expensive lookups are minimized and done asynchronously
@@ -22,20 +23,19 @@ prompt ssfprompt
 If you don't want to do it by hand, you can use a zsh plugin manager, such as [Zplugin](https://github.com/zdharma/zplugin):
 
 ```sh
-zplugin light https://gitlab.com/hugoh/zsh-ssfprompt.git
+zplugin light hugoh/zsh-ssfprompt
 ```
 
 ## Requirements
 
-* For asynchronous lookups, you will need to install [zsh-async](https://github.com/mafredri/zsh-async).
-* One Git status module; by default, it uses [posh-git-sh](https://github.com/lyze/posh-git-sh)
+- For asynchronous lookups, you will need to install [zsh-async](https://github.com/mafredri/zsh-async).
+- One Git status module; by default, it uses [<https://zsh.sourceforge.io/Doc/Release/User-Contributions.html#Version-Control-Information>](zsh's built-in `vcs_info`).
 
 Again, with Zplugin:
 
 ```sh
 zplugin light mafredri/zsh-async
-zplugin ice pick'git-prompt.sh'; zplugin light lyze/posh-git-sh
-zplugin light https://gitlab.com/hugoh/zsh-ssfprompt.git
+zplugin light hugoh/zsh-ssfprompt
 ```
 
 ## Customization
@@ -111,4 +111,12 @@ To use [git-radar](https://github.com/michaeldfallen/git-radar):
 
 ```sh
 prompt_ssfprompt_vcs_status() { command git-radar --zsh }
+```
+
+##### Using posh-git-sh
+
+To use [posh-git-sh](https://github.com/lyze/posh-git-sh):
+
+```sh
+prompt_ssfprompt_vcs_status() { __posh_git_echo }
 ```

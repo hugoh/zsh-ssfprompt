@@ -82,11 +82,13 @@ prompt_ssfprompt_help_status() {
 }
 
 #
-# VCS status function (using posh-git-sh; can be overriden)
+# VCS status function
 #
 
+autoload -Uz vcs_info
 prompt_ssfprompt_vcs_status() {
-  __posh_git_echo
+  vcs_info
+  echo "$vcs_info_msg_0_"
 }
 
 #
